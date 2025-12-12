@@ -1,7 +1,3 @@
-Here is your README with **all hyperlinks removed** (no clickable links, no URLs).
-Badges, names, and references are kept **as plain text only**.
-
----
 
 # 🚀 Autopilot.dev - Your 24/7 AI DevOps Team
 
