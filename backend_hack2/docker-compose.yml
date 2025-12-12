@@ -1,0 +1,83 @@
+services:
+  # ------------------------------------------------------------
+  # 1. Backend
+  # ------------------------------------------------------------
+  backend:
+    build: backend
+    container_name: autopilot-backend
+    ports:
+      - "8000:8000"
+    environment:
+      KESTRA_URL: http://kestra:8080
+      MONGO_URI: mongodb://mongo:27017/autopilot_db 
+    env_file:
+      - backend/.env
+    networks:
+      - kestra-net
+    depends_on:
+      - mongo
+    restart: always
+
+  # ------------------------------------------------------------
+  # 2. Kestra Server
+  # ------------------------------------------------------------
+  kestra:
+    image: kestra/kestra:latest
+    container_name: autopilot-kestra
+    user: root
+    command: server local
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/kestra-wd:/tmp/kestra-wd
+
+    env_file:
+      - backend/.env
+
+    environment:
+      KESTRA_CONFIGURATION: true
+      KESTRA_CONFIGURATION_SECRETS__TYPE: env
+      KESTRA_CONFIGURATION_SECRETS__ENV__MAPPING__GITHUB_TOKEN: ${GITHUB_TOKEN}
+      KESTRA_CONFIGURATION_SECRETS__ENV__MAPPING__OPENAI_API_KEY: ${OPENAI_API_KEY}
+      KESTRA_CONFIGURATION_SECRETS__ENV__MAPPING__BACKEND_WEBHOOK_URL: ${BACKEND_WEBHOOK_URL}
+    networks:
+      - kestra-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  # ------------------------------------------------------------
+  # 3. AI Engine (image builder)
+  # ------------------------------------------------------------
+  ai-engine:
+    build: backend/ai-engine
+    image: autopilot-ai-engine:latest
+    entrypoint: [ "echo", "AI Engine Image Built" ]
+    container_name: autopilot-ai-engine-builder
+    networks:
+      - kestra-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    profiles: [ "ai" ]
+
+  # ------------------------------------------------------------
+  # 4. MongoDB
+  # ------------------------------------------------------------
+  mongo:
+    image: mongo:6.0
+    container_name: autopilot-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - kestra-net
+    restart: always
+
+networks:
+  kestra-net:
+    driver: bridge
+
+volumes:
+  mongo_data:

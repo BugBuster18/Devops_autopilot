@@ -1,0 +1,251 @@
+/* MCU-Themed Animations and Effects */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes mcuGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3),
+                0 0 40px rgba(255, 107, 107, 0.2),
+                0 0 60px rgba(59, 130, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5),
+                0 0 60px rgba(255, 107, 107, 0.3),
+                0 0 90px rgba(59, 130, 246, 0.2);
+  }
+}
+
+@keyframes energyPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes avengersAssemble {
+  0% {
+    transform: translateY(100px) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shieldSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes arcReactor {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(196, 30, 58, 0.8),
+                0 0 40px rgba(255, 215, 0, 0.6),
+                inset 0 0 20px rgba(196, 30, 58, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(196, 30, 58, 1),
+                0 0 60px rgba(255, 215, 0, 0.8),
+                inset 0 0 30px rgba(196, 30, 58, 0.6);
+  }
+}
+
+@keyframes bifrost {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes portal {
+  0%, 100% {
+    border-radius: 50%;
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    border-radius: 40% 60% 60% 40%;
+    transform: rotate(90deg) scale(1.1);
+  }
+  50% {
+    border-radius: 60% 40% 40% 60%;
+    transform: rotate(180deg) scale(1);
+  }
+  75% {
+    border-radius: 40% 60% 60% 40%;
+    transform: rotate(270deg) scale(1.1);
+  }
+}
+
+/* MCU Color Gradients */
+.mcu-gradient-red-gold {
+  background: linear-gradient(135deg, #C41E3A 0%, #FFD700 100%);
+}
+
+.mcu-gradient-blue-red {
+  background: linear-gradient(135deg, #003A70 0%, #C41E3A 100%);
+}
+
+.mcu-gradient-gold-orange {
+  background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
+}
+
+.mcu-gradient-green-yellow {
+  background: linear-gradient(135deg, #90EE90 0%, #FFD700 100%);
+}
+
+.mcu-gradient-black-red {
+  background: linear-gradient(135deg, #1C1C1C 0%, #C41E3A 100%);
+}
+
+.mcu-gradient-indigo-purple {
+  background: linear-gradient(135deg, #4B0082 0%, #9370DB 100%);
+}
+
+/* Utility Classes */
+.mcu-glow {
+  animation: mcuGlow 3s ease-in-out infinite;
+}
+
+.mcu-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.mcu-energy-pulse {
+  animation: energyPulse 2s ease-in-out infinite;
+}
+
+.avengers-assemble {
+  animation: avengersAssemble 1s ease-out;
+}
+
+.shield-spin {
+  animation: shieldSpin 3s linear infinite;
+}
+
+.arc-reactor {
+  animation: arcReactor 2s ease-in-out infinite;
+}
+
+.bifrost {
+  background: linear-gradient(
+    90deg,
+    #FFD700,
+    #FF8C00,
+    #FFD700,
+    #FF8C00
+  );
+  background-size: 200% 100%;
+  animation: bifrost 3s ease infinite;
+}
+
+.portal {
+  animation: portal 4s ease-in-out infinite;
+}
+
+/* Text Effects */
+.mcu-text-glow {
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.5),
+    0 0 20px rgba(255, 107, 107, 0.3),
+    0 0 30px rgba(59, 130, 246, 0.2);
+}
+
+.mcu-text-gradient {
+  background: linear-gradient(
+    135deg,
+    #C41E3A 0%,
+    #FFD700 25%,
+    #003A70 50%,
+    #9370DB 75%,
+    #C41E3A 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: bifrost 5s ease infinite;
+}
+
+/* Glassmorphism with MCU theme */
+.mcu-glass {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(255, 215, 0, 0.1);
+}
+
+/* Hover Effects */
+.mcu-hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mcu-hover-lift:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+/* Particle Effects */
+.mcu-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, #FFD700, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50px);
+    opacity: 0;
+  }
+}
+

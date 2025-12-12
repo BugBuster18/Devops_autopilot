@@ -1,0 +1,7 @@
+__pycache__
+.venv
+.git
+.env
+*.log
+uvicorn_log_*.txt
+ps_output_*.txt

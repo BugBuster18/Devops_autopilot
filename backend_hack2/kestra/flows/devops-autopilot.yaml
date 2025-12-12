@@ -1,0 +1,159 @@
+id: devops-autopilot
+namespace: hackathon
+
+inputs:
+  - id: repoUrl
+    type: STRING
+    required: true
+
+  - id: branch
+    type: STRING
+    defaults: "main"
+
+  - id: userEmail
+    type: STRING
+    required: false
+
+  - id: githubToken
+    type: STRING
+    required: true
+
+  - id: userQuestion
+    type: STRING
+    required: false
+
+  - id: openAiToken
+    type: STRING
+    required: true
+
+  - id: coderabbitToken
+    type: STRING
+    required: true
+
+
+tasks:
+
+  # ----------------------------------------------------------
+  # 1️⃣ CLONE + TESTS (Docker Task)
+  # ----------------------------------------------------------
+  - id: scan-repo
+    type: io.kestra.plugin.docker.Run
+    containerImage: python:3.11
+    pullPolicy: ALWAYS
+
+    env:
+      REPO_URL: "{{ inputs.repoUrl }}"
+      GITHUB_TOKEN: "{{ inputs.githubToken }}"
+      BRANCH: "{{ inputs.branch }}"
+
+    commands:
+      - /bin/sh
+      - -c
+      - |
+        START_DIR=$(pwd)
+        mkdir -p /tmp/kestra-repo
+        cd /tmp/kestra-repo
+
+        if [ -n "$GITHUB_TOKEN" ]; then
+          AUTHED_URL=$(echo "$REPO_URL" | sed -E "s#(https://)([^/]+)#\1x-access-token:${GITHUB_TOKEN}@\2#")
+        else
+          AUTHED_URL="$REPO_URL"
+        fi
+        
+        # Install git and pytest
+        if ! command -v git &> /dev/null; then
+            apt-get update && apt-get install -y git
+        fi
+        pip install pytest
+
+        git clone --depth 1 --branch "$BRANCH" "$AUTHED_URL" repo
+
+        cd repo
+        if [ -f requirements.txt ]; then 
+            echo "📦 Installing dependencies..."
+            pip install -r requirements.txt
+        fi
+        
+        # Install project in editable mode if applicable (helps pytest discovery)
+        if [ -f setup.py ] || [ -f pyproject.toml ]; then
+            echo "📦 Installing project..."
+            pip install -e . || true
+        fi
+
+        echo "🧪 Running tests..."
+        set +e
+        pytest > ../report.txt 2>&1
+        EXIT_CODE=$?
+        set -e
+        
+        cat ../report.txt
+
+        if [ $EXIT_CODE -eq 5 ]; then
+          echo "⚠️ Pytest found no tests (Exit Code 5). Continuing..."
+          echo "No tests found in repository." >> ../report.txt
+        elif [ $EXIT_CODE -ne 0 ]; then
+          echo "❌ Tests failed with code $EXIT_CODE"
+          echo "Tests failed with exit code $EXIT_CODE" >> ../report.txt
+        else
+          echo "✅ Tests passed."
+          echo "No test failures detected." >> ../report.txt
+        fi
+        
+        # Copy report back to start dir for output capture
+        cp ../report.txt "$START_DIR/report.txt"
+
+    outputFiles:
+      - report.txt
+
+
+  # ----------------------------------------------------------
+  # 2️⃣ AI AGENT (Fix code + create PR)
+  # ----------------------------------------------------------
+  - id: run-ai-agent
+    type: io.kestra.plugin.docker.Run
+    containerImage: autopilot-ai-engine:latest
+    pullPolicy: NEVER
+
+    commands:
+      - python
+      - /app/agent.py
+
+    env:
+      REPO_PATH: "/repo"
+      REPO_URL: "{{ inputs.repoUrl }}"
+      GITHUB_TOKEN: "{{ inputs.githubToken }}"
+      BUG_REPORT: "{{ read(outputs['scan-repo'].outputFiles['report.txt']) }}"
+      USER_QUESTION: "{{ inputs.userQuestion | default('') }}"
+      LLM_API_KEY: "{{ inputs.openAiToken }}"
+      CODERABBIT_API_KEY: "{{ inputs.coderabbitToken }}"
+      OLLAMA_HOST: "http://host.docker.internal:11434/v1"
+
+    networkMode: autopilot_kestra-net
+
+    # VALID Kestra Docker volume mount
+    volumes:
+      - "/tmp/kestra-repo/repo:/repo"
+
+
+  # ----------------------------------------------------------
+  # 3️⃣ NOTIFY BACKEND
+  # ----------------------------------------------------------
+  - id: notify-backend
+    type: io.kestra.plugin.core.http.Request
+    uri: "http://autopilot-backend:8000/webhook/kestra"
+    method: POST
+    contentType: application/json
+    body: |
+      {
+        "id": "{{ execution.id }}",
+        "status": "COMPLETED",
+        "repo": "{{ inputs.repoUrl }}",
+        "branch": "{{ inputs.branch }}",
+        "user_email": "{{ inputs.userEmail }}",
+        "bug_report": {{ read(outputs['scan-repo'].outputFiles['report.txt']) | toJson }},
+        "ai_stdout": "See execution logs",
+        "ai_stderr": "See execution logs"
+      }
+
+
+
