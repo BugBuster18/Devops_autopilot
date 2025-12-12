@@ -11,9 +11,9 @@ import {
     Mail,
     CheckCircle2,
     Circle,
-    CircleAlert,
+
     CircleDotDashed,
-    CircleX,
+    XCircle,
     Github,
     Zap,
     GitBranch,
@@ -157,6 +157,16 @@ function Counter({ start = 0, end, duration = 2, className, fontSize = 30 }: { s
 }
 
 function HeroSplineBackground() {
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted) {
+        return <div className="w-full h-full bg-gradient-to-br from-black via-blue-900/30 to-black" />;
+    }
+
     return (
         <div style={{
             position: 'relative',
@@ -190,7 +200,7 @@ function HeroSplineBackground() {
                         />
                     ))}
                 </div>
-                
+
                 {/* MCU-style energy waves */}
                 <motion.div
                     className="absolute inset-0 opacity-20"
@@ -211,7 +221,7 @@ function HeroSplineBackground() {
                     }}
                 />
             </div>
-            
+
             <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-black via-blue-900/30 to-black" />}>
                 <Spline
                     style={{
@@ -497,10 +507,10 @@ function HeroContent({ onStartDemo, isDemoActive }: { onStartDemo: (url: string)
                         onChange={(e) => setRepoUrl(e.target.value)}
                     />
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button 
-                            type="submit" 
-                            size="lg" 
-                            disabled={isDemoActive} 
+                        <Button
+                            type="submit"
+                            size="lg"
+                            disabled={isDemoActive}
                             className="relative rounded-full bg-gradient-to-r from-red-600 via-yellow-500 to-blue-600 hover:from-red-700 hover:via-yellow-600 hover:to-blue-700 text-white font-bold group whitespace-nowrap overflow-hidden shadow-2xl shadow-yellow-500/30"
                         >
                             {/* MCU-style shimmer effect */}
@@ -588,7 +598,7 @@ interface WorkflowStep {
     icon: React.ReactNode;
 }
 
-function AgentWorkflowDashboard({ workflowStatus, executionId, repoUrl }: { 
+function AgentWorkflowDashboard({ workflowStatus, executionId, repoUrl }: {
     workflowStatus: DemoStatus | null;
     executionId?: string;
     repoUrl?: string;
@@ -775,9 +785,9 @@ function AgentWorkflowDashboard({ workflowStatus, executionId, repoUrl }: {
                                                             ) : step.status === "in-progress" ? (
                                                                 <CircleDotDashed className="h-5 w-5 text-blue-500 animate-spin" />
                                                             ) : step.status === "need-help" ? (
-                                                                <CircleAlert className="h-5 w-5 text-yellow-500" />
+                                                                <AlertCircle className="h-5 w-5 text-yellow-500" />
                                                             ) : step.status === "failed" ? (
-                                                                <CircleX className="h-5 w-5 text-red-500" />
+                                                                <XCircle className="h-5 w-5 text-red-500" />
                                                             ) : (
                                                                 <Circle className="text-gray-600 h-5 w-5" />
                                                             )}
@@ -834,7 +844,7 @@ function AgentWorkflowDashboard({ workflowStatus, executionId, repoUrl }: {
                             </ul>
                         </div>
                     </LayoutGroup>
-                    
+
                     {/* Together AI and Cline Components */}
                     {executionId && (
                         <div className="p-4 space-y-4 border-t border-white/10">
@@ -1065,17 +1075,17 @@ function AgentsSection() {
                     {agents.map((agent, index) => {
                         const agentTheme = MCUTheme.colors[agent.name.toLowerCase().includes('iron') ? 'ironMan' :
                             agent.name.toLowerCase().includes('captain') ? 'captainAmerica' :
-                            agent.name.toLowerCase().includes('thor') ? 'thor' :
-                            agent.name.toLowerCase().includes('vision') ? 'vision' :
-                            agent.name.toLowerCase().includes('widow') ? 'blackWidow' :
-                            'doctorStrange'];
-                        
+                                agent.name.toLowerCase().includes('thor') ? 'thor' :
+                                    agent.name.toLowerCase().includes('vision') ? 'vision' :
+                                        agent.name.toLowerCase().includes('widow') ? 'blackWidow' :
+                                            'doctorStrange'];
+
                         return (
                             <motion.div
                                 key={index}
                                 variants={itemFadeIn}
-                                whileHover={{ 
-                                    y: -15, 
+                                whileHover={{
+                                    y: -15,
                                     scale: 1.05,
                                     rotateY: 5,
                                 }}
@@ -1097,7 +1107,7 @@ function AgentsSection() {
                                         ease: "easeInOut",
                                     }}
                                 />
-                                
+
                                 {/* Shimmer effect on hover */}
                                 <motion.div
                                     className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100"
@@ -1105,11 +1115,11 @@ function AgentsSection() {
                                     whileHover={{ x: "100%" }}
                                     transition={{ duration: 0.6 }}
                                 />
-                                
+
                                 <div className="relative z-10">
                                     <motion.div
                                         className={`mb-4 inline-flex p-3 rounded-2xl bg-gradient-to-br ${agent.color} shadow-lg`}
-                                        whileHover={{ 
+                                        whileHover={{
                                             scale: 1.1,
                                             rotate: [0, -5, 5, 0],
                                         }}
@@ -1443,8 +1453,8 @@ export default function CombinedLanding() {
                     <div ref={screenshotRef} className="bg-gradient-to-br from-purple-900/20 to-black rounded-3xl overflow-hidden shadow-2xl border border-purple-500/30 w-full md:w-[80%] lg:w-[70%] mx-auto">
                         <div className="p-8">
                             {/* Replaced the small mock dashboard with the full Agent Workflow Dashboard */}
-                            <AgentWorkflowDashboard 
-                                workflowStatus={workflowStatus} 
+                            <AgentWorkflowDashboard
+                                workflowStatus={workflowStatus}
                                 executionId={executionId}
                                 repoUrl={repoUrl}
                             />
