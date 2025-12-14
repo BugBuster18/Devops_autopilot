@@ -116,23 +116,12 @@ FastAPI • Next.js • Kestra • MongoDB Atlas • Docker Compose
 
 ---
 
-## 🖥️ Demo
 
-### Live Demo
 
-Autopilot.dev (Link removed)
-
-### Demo Video
+## Demo Video
 
 Demo Video (Link removed)
 
-### Screenshots
-
-*(Placeholder images used — no URLs)*
-
-* **Dashboard View**
-* **Workflow Visualization**
-* **Agent Logs**
 
 ---
 
@@ -336,28 +325,6 @@ AI Providers: OpenAI, Groq, Together AI, CodeRabbit, Google Veo/Pika
 
 ---
 
-## 📜 License
-
-MIT License
-
----
-
-## 🚧 Roadmap
-
-* GitLab / Bitbucket support
-* Configurable agents in UI
-* Slack & Email notifications
-* Template workflows
-* Multi-tenant support
-* Cost dashboard
-
----
-
-## 🤝 Contributing
-
-Pull Requests welcome.
-
----
 
 ## 📞 Support
 
