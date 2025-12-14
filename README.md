@@ -120,8 +120,7 @@ FastAPI • Next.js • Kestra • MongoDB Atlas • Docker Compose
 
 ## Demo Video
 
-Demo Video (Link removed)
-
+https://youtu.be/EJ6GwYayyP8
 
 ---
 
